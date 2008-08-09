@@ -1,0 +1,22 @@
+## Title: NazScrooge
+## Notes: Put money away for a rainy day
+## Author: Rodrick
+## X-eMail: d DOT mangus AT gmail DOT com
+## X-Website: http://guild.requiemtech.com/
+
+## Interface: 20400
+## Version: 1.0
+
+## DefaultState: enabled
+## LoadOnDemand: 0
+## SavedVariables: NazScroogeDB
+## SavedVariablesPerCharacter: NazScroogeDBPC
+## OptionalDeps: Ace2, DewdropLib, LibSink-2.0
+## X-Embeds: Ace2, DewdropLib, LibSink-2.0
+## X-Category: Inventory
+## X-License: GPL v2 or later
+
+embeds.xml
+locales\locales.xml
+
+Core.lua
