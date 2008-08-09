@@ -29,6 +29,7 @@
                 Fixed bug wherein you deposit more than you have avail and it says that you deposit the total rather than the diff
         1.15 Added in the target command
         1.20 Added in screenflash and sound upon reaching goal
+        1.25b Beta release (still need to work on LDB plugin as well as go over wording on some options/returns)
 ------------------------------------------------------------------------------------]]
 
 local NazScrooge_Orig_GetMoney, NazScrooge_Orig_BuyMerchantItem, NazScrooge_Orig_BuybackItem, NazScrooge_Orig_RepairAllItems, NazScrooge_Orig_BuyGuildBankTab, NazScrooge_Orig_BuyGuildCharter, NazScrooge_Orig_BuyStableSlot, NazScrooge_Orig_BuyPetition, NazScrooge_Orig_BuyTrainerService, NazScrooge_Orig_PickupInventoryItem, NazScrooge_Orig_PickupContainerItem, NazScrooge_Orig_PickupMerchantItem, NazScrooge_Orig_TakeTaxiNode, NazScrooge_Orig_PickupPlayerMoney, NazScrooge_Orig_SetTradeMoney, NazScrooge_Orig_SetSendMailMoney, NazScrooge_Orig_SendMail, NazScrooge_Orig_CompleteQuest, NazScrooge_Orig_TabardModel_Save, NazScrooge_Orig_DepositGuildBankMoney, NazScrooge_Orig_BuyGuildBankTab, NazScrooge_Orig_PurchaseSlot, NazScrooge_Orig_ConfirmTalentWipe, NazScrooge_Orig_PlaceAuctionBid, NazScrooge_Orig_StartAuction
