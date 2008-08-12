@@ -36,6 +36,13 @@ local NazScrooge_Orig_GetMoney, NazScrooge_Orig_BuyMerchantItem, NazScrooge_Orig
 
 NazScrooge = LibStub("AceAddon-3.0"):NewAddon("NazScrooge", "LibSink-2.0", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("NazScrooge")
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local dataobj = ldb:NewDataObject("NazScrooge", {
+    icon = "Interface\\Icons\\Spell_Nature_StormReach",
+    OnClick = function(clickedframe, button)
+        InterfaceOptionsFrame_OpenToFrame(NazScrooge.optionsframe)
+    end,
+})
 
 local iconpath = "Interface\\AddOns\\NazScrooge\\textures\\"
 local coppertex = ' |T' .. iconpath .. 'Copper.blp' .. ':16:16:0:0|t '
@@ -58,6 +65,7 @@ local function Error(msg)
 end
 
 local function GetAvgSaved()
+    if sessionsaved == 0 then return 0 end
     return sessionsaved/((time() - starttime)/3600)
 end
 
@@ -73,12 +81,12 @@ local function makedisplay(copper)
 	copper = round(copper - gold*10000 - silver*100, 0)
 	local value = ''
 	if gold >= 1 then
-		value = gold .. ' ' .. goldtex .. ' '
+		value = gold  .. goldtex .. ' '
 	end
 	if silver >= 1 or gold >= 1 then
-		value = value .. silver .. ' ' .. silvertex .. ' '
+		value = value .. silver  .. silvertex .. ' '
 	end
-	return value .. copper .. ' ' .. coppertex
+	return value .. copper  .. coppertex
 end
 
 --[[----------------------------------------------------------------------------------
@@ -138,6 +146,27 @@ local function CheckGoal()
     end
 end
 
+function dataobj:OnTooltipShow()
+    self:AddLine(dataobj.tooltiptext)
+end
+
+function dataobj:OnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_NONE")
+    GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+    GameTooltip:ClearLines()
+    dataobj.OnTooltipShow(GameTooltip)
+    GameTooltip:Show()
+end
+
+function dataobj:OnLeave()
+    GameTooltip:Hide()
+end
+
+local function Refresh_LDB()
+    dataobj.text = makedisplay(NazScrooge.db.char.savedcopper)
+    dataobj.tooltiptext = string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved()))
+end
+
 --[[----------------------------------------------------------------------------------
 	Notes:
 	* Refreshes displays (bag, etc.)
@@ -145,7 +174,8 @@ end
 local function Refresh_Display()
 
     CheckGoal()
-
+    
+    Refresh_LDB()
     -- Blizz frames
     
 	if (IsBagOpen(0)) then
@@ -920,6 +950,7 @@ function NazScrooge:OnEnable()
     NazScrooge_Orig_StartAuction = StartAuction
     StartAuction = NazScrooge_StartAuction
 	self:RegisterEvent("PLAYER_MONEY")
+    Refresh_LDB()
 end
 
 function NazScrooge:PLAYER_MONEY()
