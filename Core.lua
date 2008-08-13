@@ -38,7 +38,7 @@ NazScrooge = LibStub("AceAddon-3.0"):NewAddon("NazScrooge", "LibSink-2.0", "AceC
 local L = LibStub("AceLocale-3.0"):GetLocale("NazScrooge")
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 local dataobj = ldb:NewDataObject("NazScrooge", {
-    icon = "Interface\\Icons\\Spell_Nature_StormReach",
+    icon = "Interface\\Icons\\INV_Misc_Coin_02",
     OnClick = function(clickedframe, button)
         InterfaceOptionsFrame_OpenToFrame(NazScrooge.optionsframe)
     end,
@@ -74,19 +74,29 @@ local function round(num, idp)
 	return math.floor(num * mult + 0.5) / mult
 end
 
-local function makedisplay(copper)
+local function makedisplay(copper, display)
+    local goldsuffix, silversuffix, coppersuffix
+    if NazScrooge.db.profile.sinkOptions.sink20OutputSink == "Channel" and not display then
+        goldsuffix = 'g'
+        silversuffix = 's'
+        coppersuffix = 'c'
+    else
+        goldsuffix = goldtex
+        silversuffix = silvertex
+        coppersuffix = coppertex
+    end
 	copper = tonumber(copper)
 	local gold = math.floor(copper/10000)
 	local silver = math.floor((copper - gold*10000)/100)
 	copper = round(copper - gold*10000 - silver*100, 0)
 	local value = ''
 	if gold >= 1 then
-		value = gold  .. goldtex .. ' '
+		value = gold  .. goldsuffix .. ' '
 	end
 	if silver >= 1 or gold >= 1 then
-		value = value .. silver  .. silvertex .. ' '
+		value = value .. silver  .. silversuffix .. ' '
 	end
-	return value .. copper  .. coppertex
+	return value .. copper  .. coppersuffix
 end
 
 --[[----------------------------------------------------------------------------------
@@ -163,8 +173,8 @@ function dataobj:OnLeave()
 end
 
 local function Refresh_LDB()
-    dataobj.text = makedisplay(NazScrooge.db.char.savedcopper)
-    dataobj.tooltiptext = string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved()))
+    dataobj.text = makedisplay(NazScrooge.db.char.savedcopper, true)
+    dataobj.tooltiptext = string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper), true) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved(), true))
 end
 
 --[[----------------------------------------------------------------------------------
@@ -886,7 +896,7 @@ function NazScrooge:OnInitialize()
 	self:SetSinkStorage(self.db.profile.sinkOptions) -- set location to save sink options
 	options.args.output = self:GetSinkAce3OptionsDataTable() -- add in the libsink options table to our options table
 	local channel = L["Channel"] -- get the localized channel name
-	options.args.output.args[channel] = nil -- nil out said channel name since we can't send textures to a channel
+	--options.args.output.args[channel] = nil -- nil out said channel name since we can't send textures to a channel
     options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db) -- add in the profile commands to our options table
     self.optionsframe = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("NazScrooge", "NazScrooge") -- Add the options to Bliz's new section in interface
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("NazScrooge", options) -- Register the chat commands to use our options table

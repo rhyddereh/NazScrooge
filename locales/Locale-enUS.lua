@@ -41,6 +41,6 @@ L["You do not have enough saved!  Increasing money in your lockbox to %s gold"] 
 L["Saving %s"] = true
 L['You do not have enough saved increasing lockbox money by %s gold.'] = true
 L['You do not have enough saved increasing lockbox money to the minimum %s gold.'] = true
-L['You have reached the maximum amount you want available increasing lockbox money by %s gold.'] = true
+L['You have reached the maximum amount you want available, increasing lockbox money by %s gold.'] = true
 L["Earned %s, saving %s."] = true
 L["You have reached your goal of %s."] = true
