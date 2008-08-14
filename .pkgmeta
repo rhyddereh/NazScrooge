@@ -13,3 +13,4 @@ externals:
    libs/LibStub: http://svn.wowace.com/wowace/branches/Ace3/WotLK/LibStub
    libs/CallbackHandler-1.0: http://svn.wowace.com/wowace/branches/Ace3/WotLK/CallbackHandler-1.0
    libs/LibSink-2.0: http://svn.wowace.com/wowace/trunk/LibSink-2.0/LibSink-2.0
+   libs/LibDataBroker-1.1: git://github.com/tekkub/libdatabroker-1-1.git

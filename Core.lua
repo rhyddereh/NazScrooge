@@ -2,7 +2,6 @@
 	NazScrooge Core addon
 	
 	TODO:   Add in a callback for when the display is actually updated
-            Add a LDB plugin
             Add in display updates for various addons
            
     Compatibility with: (note: those with ? after them have not been tested by me and therefor not verified)
@@ -29,12 +28,22 @@
                 Fixed bug wherein you deposit more than you have avail and it says that you deposit the total rather than the diff
         1.15 Added in the target command
         1.20 Added in screenflash and sound upon reaching goal
+        1.25b Beta release (still need to work on LDB plugin as well as go over wording on some options/returns)
+        1.251b Beta release, added in LDB button`
+        1.30b Beta release, Changed some wording to make things more consistent/clear and added in a GRATS! message when you reach your target.
 ------------------------------------------------------------------------------------]]
 
 local NazScrooge_Orig_GetMoney, NazScrooge_Orig_BuyMerchantItem, NazScrooge_Orig_BuybackItem, NazScrooge_Orig_RepairAllItems, NazScrooge_Orig_BuyGuildBankTab, NazScrooge_Orig_BuyGuildCharter, NazScrooge_Orig_BuyStableSlot, NazScrooge_Orig_BuyPetition, NazScrooge_Orig_BuyTrainerService, NazScrooge_Orig_PickupInventoryItem, NazScrooge_Orig_PickupContainerItem, NazScrooge_Orig_PickupMerchantItem, NazScrooge_Orig_TakeTaxiNode, NazScrooge_Orig_PickupPlayerMoney, NazScrooge_Orig_SetTradeMoney, NazScrooge_Orig_SetSendMailMoney, NazScrooge_Orig_SendMail, NazScrooge_Orig_CompleteQuest, NazScrooge_Orig_TabardModel_Save, NazScrooge_Orig_DepositGuildBankMoney, NazScrooge_Orig_BuyGuildBankTab, NazScrooge_Orig_PurchaseSlot, NazScrooge_Orig_ConfirmTalentWipe, NazScrooge_Orig_PlaceAuctionBid, NazScrooge_Orig_StartAuction
 
 NazScrooge = LibStub("AceAddon-3.0"):NewAddon("NazScrooge", "LibSink-2.0", "AceConsole-3.0", "AceEvent-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("NazScrooge")
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
+local dataobj = ldb:NewDataObject("NazScrooge", {
+    icon = "Interface\\Icons\\INV_Misc_Coin_02",
+    OnClick = function(clickedframe, button)
+        InterfaceOptionsFrame_OpenToFrame(NazScrooge.optionsframe)
+    end,
+})
 
 local iconpath = "Interface\\AddOns\\NazScrooge\\textures\\"
 local coppertex = ' |T' .. iconpath .. 'Copper.blp' .. ':16:16:0:0|t '
@@ -47,16 +56,8 @@ local verbosemin = false
 local verbosemax = false
 local verbosepct = false
 
---[[----------------------------------------------------------------------------------
-	Notes:
-	* Prints out errors
-    * Pulled it into a function so we can later ouput to various places depending on option chosen
-------------------------------------------------------------------------------------]]
-local function Error(msg)
-	NazScrooge:Pour(msg)
-end
-
 local function GetAvgSaved()
+    if sessionsaved == 0 then return 0 end
     return sessionsaved/((time() - starttime)/3600)
 end
 
@@ -65,19 +66,29 @@ local function round(num, idp)
 	return math.floor(num * mult + 0.5) / mult
 end
 
-local function makedisplay(copper)
+local function makedisplay(copper, display)
+    local goldsuffix, silversuffix, coppersuffix
+    if NazScrooge.db.profile.sinkOptions.sink20OutputSink == "Channel" and not display then
+        goldsuffix = 'g'
+        silversuffix = 's'
+        coppersuffix = 'c'
+    else
+        goldsuffix = goldtex
+        silversuffix = silvertex
+        coppersuffix = coppertex
+    end
 	copper = tonumber(copper)
 	local gold = math.floor(copper/10000)
 	local silver = math.floor((copper - gold*10000)/100)
 	copper = round(copper - gold*10000 - silver*100, 0)
 	local value = ''
 	if gold >= 1 then
-		value = gold .. ' ' .. goldtex .. ' '
+		value = gold  .. goldsuffix .. ' '
 	end
 	if silver >= 1 or gold >= 1 then
-		value = value .. silver .. ' ' .. silvertex .. ' '
+		value = value .. silver  .. silversuffix .. ' '
 	end
-	return value .. copper .. ' ' .. coppertex
+	return value .. copper  .. coppersuffix
 end
 
 --[[----------------------------------------------------------------------------------
@@ -127,7 +138,8 @@ end
 function NazScrooge:ReachedGoal()
     PlaySoundFile("Interface\\AddOns\\NazScrooge\\sounds\\ApplauseShortened.mp3")
     NazScrooge:Flash()
-    Error(string.format(L["You have reached your goal of %s."], makedisplay(NazScrooge.db.char.target)))
+    NazScrooge:Pour(L["CONGRATULATIONS!!"])
+    NazScrooge:Pour(string.format(L["You have reached your goal of %s."], makedisplay(NazScrooge.db.char.target)))
 end
 
 local function CheckGoal()
@@ -137,6 +149,27 @@ local function CheckGoal()
     end
 end
 
+function dataobj:OnTooltipShow()
+    self:AddLine(dataobj.tooltiptext)
+end
+
+function dataobj:OnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_NONE")
+    GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+    GameTooltip:ClearLines()
+    dataobj.OnTooltipShow(GameTooltip)
+    GameTooltip:Show()
+end
+
+function dataobj:OnLeave()
+    GameTooltip:Hide()
+end
+
+local function Refresh_LDB()
+    dataobj.text = makedisplay(NazScrooge.db.char.savedcopper, true)
+    dataobj.tooltiptext = string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper), true) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved(), true))
+end
+
 --[[----------------------------------------------------------------------------------
 	Notes:
 	* Refreshes displays (bag, etc.)
@@ -144,7 +177,8 @@ end
 local function Refresh_Display()
 
     CheckGoal()
-
+    
+    Refresh_LDB()
     -- Blizz frames
     
 	if (IsBagOpen(0)) then
@@ -339,7 +373,7 @@ local options = {
                 toggletarget = {
                     type = 'toggle',
                     name = L["Target"],
-                    desc = L["Are you saving to a finite point?"],
+                    desc = L["Are you saving to a specific goal amount?"],
                     get = function()
                                 return NazScrooge.db.char.targettoggle
                             end,
@@ -431,17 +465,17 @@ local options = {
 		deposit = {
 			type = 'input',
 			name = L["Deposit"],
-			desc = L["Deposit how much to your lockbox?"],
+			desc = L["What amount would you like to Deposit to your lockbox?"],
             usage = L["<number in gold>"],
 			get = false,
 			set = function(info, newValue)
                         newValue = newValue or 0
                         oldvalue = NazScrooge.db.char.savedcopper
 						if addmoney(newValue*10000) then
-                            Error(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+                            NazScrooge:Pour(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
                         else
-                            Error(string.format(L["You tried to deposit more money than you had! Deposited %s."], makedisplay(NazScrooge_Orig_GetMoney() - oldvalue)))
-                            Error(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+                            NazScrooge:Pour(string.format(L["You tried to deposit more money than you have! Deposited %s."], makedisplay(NazScrooge_Orig_GetMoney() - oldvalue)))
+                            NazScrooge:Pour(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
                         end
                         Refresh_Display()
 					end,
@@ -450,16 +484,16 @@ local options = {
 		withdraw = {
 			type = 'input',
 			name = L["Withdraw"],
-			desc = L["Withdraw how much from your lockbox?"],
+			desc = L["What amount would you like to Withdraw from your lockbox?"],
             usage = L["<number in gold>"],
 			get = false,
 			set = function(info, newValue)
                         newValue = newValue or 0
                         local removed = removemoney(newValue*10000)
 						if removed == true then
-                            Error(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+                            NazScrooge:Pour(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
                         else
-                            Error(string.format(L["You tried to take out more money than you had saved.  Withrew the balance of %s."], makedisplay(removed)))
+                            NazScrooge:Pour(string.format(L["You tried to take out more money than you had saved.  Withrew the balance of %s."], makedisplay(removed)))
                         end   
                         Refresh_Display()
 					end,
@@ -470,8 +504,8 @@ local options = {
 			name = L["Display"],
 			desc = L["Display the gold in your lockbox"],
 			func = function()
-						Error(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
-						Error(string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved())))
+						NazScrooge:Pour(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+						NazScrooge:Pour(string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved())))
 					end,
 			order = 20,
 		},
@@ -504,7 +538,7 @@ end
 local function checktotal(price)
     price = price or 0
     if price >  GetMoney() then
-        Error(L["You do not have enough money to do that."])
+        NazScrooge:Pour(L["You do not have enough money to do that."])
         return false
     else
         return true
@@ -855,7 +889,7 @@ function NazScrooge:OnInitialize()
 	self:SetSinkStorage(self.db.profile.sinkOptions) -- set location to save sink options
 	options.args.output = self:GetSinkAce3OptionsDataTable() -- add in the libsink options table to our options table
 	local channel = L["Channel"] -- get the localized channel name
-	options.args.output.args[channel] = nil -- nil out said channel name since we can't send textures to a channel
+	--options.args.output.args[channel] = nil -- nil out said channel name since we can't send textures to a channel
     options.args.profile = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db) -- add in the profile commands to our options table
     self.optionsframe = LibStub("AceConfigDialog-3.0"):AddToBlizOptions("NazScrooge", "NazScrooge") -- Add the options to Bliz's new section in interface
 	LibStub("AceConfig-3.0"):RegisterOptionsTable("NazScrooge", options) -- Register the chat commands to use our options table
@@ -919,6 +953,7 @@ function NazScrooge:OnEnable()
     NazScrooge_Orig_StartAuction = StartAuction
     StartAuction = NazScrooge_StartAuction
 	self:RegisterEvent("PLAYER_MONEY")
+    Refresh_LDB()
 end
 
 function NazScrooge:PLAYER_MONEY()
@@ -928,39 +963,39 @@ function NazScrooge:PLAYER_MONEY()
         if NazScrooge_Orig_GetMoney() < NazScrooge.db.profile.keepamount*10000 then
             NazScrooge.db.char.savedcopper = NazScrooge_Orig_GetMoney()
             if not verbosemin then
-                Error(string.format(L['You do not have enough saved, increasing lockbox money by %s gold.'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['You do not have enough saved, increasing lockbox money by %s'], makedisplay(diff)))
                 verbosemin = true
                 verbosemax = false
                 verbosepct = false
             else
-                Error(string.format(L['Saving %s'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(diff)))
             end
         else
         	NazScrooge.db.char.savedcopper = NazScrooge.db.profile.keepamount*10000
             if not verbosemin then
-                Error(string.format(L['You do not have enough saved, increasing lockbox money to the minimum %s gold.'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
+                NazScrooge:Pour(string.format(L['You do not have enough saved, increasing lockbox money to the minimum %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
                 verbosemin = true
                 verbosemax = false
                 verbosepct = false
             else
-                Error(string.format(L['Saving %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
+                NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
             end
         end
 	elseif diff > 0 then
 		if NazScrooge.db.profile.maxtoggle and NazScrooge_Orig_GetMoney() > tonumber(NazScrooge.db.profile.maxamount*10000) then
 			NazScrooge.db.char.savedcopper = NazScrooge_Orig_GetMoney() - NazScrooge.db.profile.maxamount*10000
             if not verbosemax then
-                Error(string.format(L['You have reached the maximum amount you want available, increasing lockbox money by %s gold.'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['You have reached the maximum amount you want available, increasing lockbox money by %s'], makedisplay(diff)))
                 verbosemin = false
                 verbosemax = true
                 verbosepct = false
             else
-                Error(string.format(L['Saving %s'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(diff)))
             end
 		elseif NazScrooge.db.profile.percenttoggle then
 			local increase = round((NazScrooge.db.profile.keeppercent / 100) * diff, 0)
 			addmoney(increase)
-			Error(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
+			NazScrooge:Pour(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
 		end
 	end
 	lasttotal = lasttotal + diff
