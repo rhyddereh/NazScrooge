@@ -2,7 +2,6 @@
 	NazScrooge Core addon
 	
 	TODO:   Add in a callback for when the display is actually updated
-            Add a LDB plugin
             Add in display updates for various addons
            
     Compatibility with: (note: those with ? after them have not been tested by me and therefor not verified)
@@ -30,6 +29,8 @@
         1.15 Added in the target command
         1.20 Added in screenflash and sound upon reaching goal
         1.25b Beta release (still need to work on LDB plugin as well as go over wording on some options/returns)
+        1.251b Beta release, added in LDB button`
+        1.30b Beta release, Changed some wording to make things more consistent/clear and added in a GRATS! message when you reach your target.
 ------------------------------------------------------------------------------------]]
 
 local NazScrooge_Orig_GetMoney, NazScrooge_Orig_BuyMerchantItem, NazScrooge_Orig_BuybackItem, NazScrooge_Orig_RepairAllItems, NazScrooge_Orig_BuyGuildBankTab, NazScrooge_Orig_BuyGuildCharter, NazScrooge_Orig_BuyStableSlot, NazScrooge_Orig_BuyPetition, NazScrooge_Orig_BuyTrainerService, NazScrooge_Orig_PickupInventoryItem, NazScrooge_Orig_PickupContainerItem, NazScrooge_Orig_PickupMerchantItem, NazScrooge_Orig_TakeTaxiNode, NazScrooge_Orig_PickupPlayerMoney, NazScrooge_Orig_SetTradeMoney, NazScrooge_Orig_SetSendMailMoney, NazScrooge_Orig_SendMail, NazScrooge_Orig_CompleteQuest, NazScrooge_Orig_TabardModel_Save, NazScrooge_Orig_DepositGuildBankMoney, NazScrooge_Orig_BuyGuildBankTab, NazScrooge_Orig_PurchaseSlot, NazScrooge_Orig_ConfirmTalentWipe, NazScrooge_Orig_PlaceAuctionBid, NazScrooge_Orig_StartAuction
@@ -54,15 +55,6 @@ local starttime = 0
 local verbosemin = false
 local verbosemax = false
 local verbosepct = false
-
---[[----------------------------------------------------------------------------------
-	Notes:
-	* Prints out errors
-    * Pulled it into a function so we can later ouput to various places depending on option chosen
-------------------------------------------------------------------------------------]]
-local function Error(msg)
-	NazScrooge:Pour(msg)
-end
 
 local function GetAvgSaved()
     if sessionsaved == 0 then return 0 end
@@ -146,7 +138,8 @@ end
 function NazScrooge:ReachedGoal()
     PlaySoundFile("Interface\\AddOns\\NazScrooge\\sounds\\ApplauseShortened.mp3")
     NazScrooge:Flash()
-    Error(string.format(L["You have reached your goal of %s."], makedisplay(NazScrooge.db.char.target)))
+    NazScrooge:Pour(L["CONGRATULATIONS!!"])
+    NazScrooge:Pour(string.format(L["You have reached your goal of %s."], makedisplay(NazScrooge.db.char.target)))
 end
 
 local function CheckGoal()
@@ -380,7 +373,7 @@ local options = {
                 toggletarget = {
                     type = 'toggle',
                     name = L["Target"],
-                    desc = L["Are you saving to a finite point?"],
+                    desc = L["Are you saving to a specific goal amount?"],
                     get = function()
                                 return NazScrooge.db.char.targettoggle
                             end,
@@ -472,17 +465,17 @@ local options = {
 		deposit = {
 			type = 'input',
 			name = L["Deposit"],
-			desc = L["Deposit how much to your lockbox?"],
+			desc = L["What amount would you like to Deposit to your lockbox?"],
             usage = L["<number in gold>"],
 			get = false,
 			set = function(info, newValue)
                         newValue = newValue or 0
                         oldvalue = NazScrooge.db.char.savedcopper
 						if addmoney(newValue*10000) then
-                            Error(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+                            NazScrooge:Pour(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
                         else
-                            Error(string.format(L["You tried to deposit more money than you had! Deposited %s."], makedisplay(NazScrooge_Orig_GetMoney() - oldvalue)))
-                            Error(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+                            NazScrooge:Pour(string.format(L["You tried to deposit more money than you have! Deposited %s."], makedisplay(NazScrooge_Orig_GetMoney() - oldvalue)))
+                            NazScrooge:Pour(string.format(L["You now have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
                         end
                         Refresh_Display()
 					end,
@@ -491,16 +484,16 @@ local options = {
 		withdraw = {
 			type = 'input',
 			name = L["Withdraw"],
-			desc = L["Withdraw how much from your lockbox?"],
+			desc = L["What amount would you like to Withdraw from your lockbox?"],
             usage = L["<number in gold>"],
 			get = false,
 			set = function(info, newValue)
                         newValue = newValue or 0
                         local removed = removemoney(newValue*10000)
 						if removed == true then
-                            Error(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+                            NazScrooge:Pour(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
                         else
-                            Error(string.format(L["You tried to take out more money than you had saved.  Withrew the balance of %s."], makedisplay(removed)))
+                            NazScrooge:Pour(string.format(L["You tried to take out more money than you had saved.  Withrew the balance of %s."], makedisplay(removed)))
                         end   
                         Refresh_Display()
 					end,
@@ -511,8 +504,8 @@ local options = {
 			name = L["Display"],
 			desc = L["Display the gold in your lockbox"],
 			func = function()
-						Error(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
-						Error(string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved())))
+						NazScrooge:Pour(string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper)))
+						NazScrooge:Pour(string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved())))
 					end,
 			order = 20,
 		},
@@ -545,7 +538,7 @@ end
 local function checktotal(price)
     price = price or 0
     if price >  GetMoney() then
-        Error(L["You do not have enough money to do that."])
+        NazScrooge:Pour(L["You do not have enough money to do that."])
         return false
     else
         return true
@@ -970,39 +963,39 @@ function NazScrooge:PLAYER_MONEY()
         if NazScrooge_Orig_GetMoney() < NazScrooge.db.profile.keepamount*10000 then
             NazScrooge.db.char.savedcopper = NazScrooge_Orig_GetMoney()
             if not verbosemin then
-                Error(string.format(L['You do not have enough saved, increasing lockbox money by %s gold.'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['You do not have enough saved, increasing lockbox money by %s'], makedisplay(diff)))
                 verbosemin = true
                 verbosemax = false
                 verbosepct = false
             else
-                Error(string.format(L['Saving %s'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(diff)))
             end
         else
         	NazScrooge.db.char.savedcopper = NazScrooge.db.profile.keepamount*10000
             if not verbosemin then
-                Error(string.format(L['You do not have enough saved, increasing lockbox money to the minimum %s gold.'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
+                NazScrooge:Pour(string.format(L['You do not have enough saved, increasing lockbox money to the minimum %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
                 verbosemin = true
                 verbosemax = false
                 verbosepct = false
             else
-                Error(string.format(L['Saving %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
+                NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
             end
         end
 	elseif diff > 0 then
 		if NazScrooge.db.profile.maxtoggle and NazScrooge_Orig_GetMoney() > tonumber(NazScrooge.db.profile.maxamount*10000) then
 			NazScrooge.db.char.savedcopper = NazScrooge_Orig_GetMoney() - NazScrooge.db.profile.maxamount*10000
             if not verbosemax then
-                Error(string.format(L['You have reached the maximum amount you want available, increasing lockbox money by %s gold.'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['You have reached the maximum amount you want available, increasing lockbox money by %s'], makedisplay(diff)))
                 verbosemin = false
                 verbosemax = true
                 verbosepct = false
             else
-                Error(string.format(L['Saving %s'], makedisplay(diff)))
+                NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(diff)))
             end
 		elseif NazScrooge.db.profile.percenttoggle then
 			local increase = round((NazScrooge.db.profile.keeppercent / 100) * diff, 0)
 			addmoney(increase)
-			Error(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
+			NazScrooge:Pour(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
 		end
 	end
 	lasttotal = lasttotal + diff
