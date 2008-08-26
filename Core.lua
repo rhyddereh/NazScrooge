@@ -153,8 +153,10 @@ function dataobj:OnTooltipShow()
     self:AddLine(dataobj.tooltiptext)
 end
 
-function dataobj:OnEnter(frame)
-    GameTooltip_SetDefaultAnchor(GameTooltip, frame)
+function dataobj:OnEnter()
+    GameTooltip:SetOwner(self, "ANCHOR_NONE")
+    GameTooltip:SetPoint("TOPLEFT", self, "BOTTOMLEFT")
+    GameTooltip:ClearLines()
     dataobj.OnTooltipShow(GameTooltip)
     GameTooltip:Show()
 end
