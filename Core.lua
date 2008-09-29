@@ -1,4 +1,4 @@
-﻿--[[----------------------------------------------------------------------------------
+--[[----------------------------------------------------------------------------------
 	NazScrooge Core addon
 	
 	TODO:   Add in a callback for when the display is actually updated
@@ -39,6 +39,7 @@ NazScrooge = LibStub("AceAddon-3.0"):NewAddon("NazScrooge", "LibSink-2.0", "AceC
 local L = LibStub("AceLocale-3.0"):GetLocale("NazScrooge")
 local ldb = LibStub:GetLibrary("LibDataBroker-1.1")
 local dataobj = ldb:NewDataObject("NazScrooge", {
+    type = "data source",
     icon = "Interface\\Icons\\INV_Misc_Coin_02",
     OnClick = function(clickedframe, button)
         InterfaceOptionsFrame_OpenToFrame(NazScrooge.optionsframe)
