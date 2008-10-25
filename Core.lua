@@ -42,7 +42,7 @@ local dataobj = ldb:NewDataObject("NazScrooge", {
     type = "data source",
     icon = "Interface\\Icons\\INV_Misc_Coin_02",
     OnClick = function(clickedframe, button)
-        InterfaceOptionsFrame_OpenToFrame(NazScrooge.optionsframe)
+        InterfaceOptionsFrame_OpenToCategory(NazScrooge.optionsframe)
     end,
 })
 
@@ -861,7 +861,7 @@ end
 
 local function ChatCmd(input)
 	if not input or input:trim() == "" then
-		InterfaceOptionsFrame_OpenToFrame(NazScrooge.optionsframe)
+		InterfaceOptionsFrame_OpenToCategory(NazScrooge.optionsframe)
 	else
 		LibStub("AceConfigCmd-3.0").HandleCommand(NazScrooge, "NazScrooge", "NazScrooge", input:trim() ~= "help" and input or "")
 	end

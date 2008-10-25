@@ -16,7 +16,10 @@
 ## X-Category: Inventory
 ## X-License: GPL v2 or later
 
+#@no-lib-strip@
 embeds.xml
+#@end-no-lib-strip@
+
 locales\locales.xml
 
 Core.lua
