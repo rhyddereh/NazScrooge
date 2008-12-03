@@ -46,11 +46,6 @@ local dataobj = ldb:NewDataObject("NazScrooge", {
     end,
 })
 
-local iconpath = "Interface\\AddOns\\NazScrooge\\textures\\"
-local coppertex = ' |T' .. iconpath .. 'Copper.blp' .. ':16:16:0:0|t '
-local silvertex = ' |T' .. iconpath .. 'Silver.blp' .. ':16|t '
-local goldtex = ' |T' .. iconpath .. 'Gold.blp' .. ':16|t '
-
 local sessionsaved = 0
 local starttime = 0
 local verbosemin = false
@@ -68,28 +63,11 @@ local function round(num, idp)
 end
 
 local function makedisplay(copper, display)
-    local goldsuffix, silversuffix, coppersuffix
     if NazScrooge.db.profile.sinkOptions.sink20OutputSink == "Channel" and not display then
-        goldsuffix = 'g'
-        silversuffix = 's'
-        coppersuffix = 'c'
+		return GetDenominationsFromCopper(copper)
     else
-        goldsuffix = goldtex
-        silversuffix = silvertex
-        coppersuffix = coppertex
+        return GetCoinTextureString(copper, 16)
     end
-	copper = tonumber(copper)
-	local gold = math.floor(copper/10000)
-	local silver = math.floor((copper - gold*10000)/100)
-	copper = round(copper - gold*10000 - silver*100, 0)
-	local value = ''
-	if gold >= 1 then
-		value = gold  .. goldsuffix .. ' '
-	end
-	if silver >= 1 or gold >= 1 then
-		value = value .. silver  .. silversuffix .. ' '
-	end
-	return value .. copper  .. coppersuffix
 end
 
 --[[----------------------------------------------------------------------------------
@@ -857,6 +835,18 @@ local function NazScrooge_StartAuction(minBid, buyoutPrice, runTime, ...)
     end
 end
 
+
+--[[----------------------------------------------------------------------------------
+	Notes:
+    * Hooked version of ApplyBarberShopStyle
+	* Makes sure you have enough non-hidden money and then passes or blocks depending
+------------------------------------------------------------------------------------]]
+local function NazScrooge_ApplyBarberShopStyle(...)
+    local price = GetBarberShopTotalCost()
+    if checktotal(price) then
+        return NazScrooge_Orig_ApplyBarberShopStyle(...)
+    end
+end
 --Setup functions
 
 local function ChatCmd(input)
@@ -953,6 +943,8 @@ function NazScrooge:OnEnable()
     PlaceAuctionBid = NazScrooge_PlaceAuctionBid
     NazScrooge_Orig_StartAuction = StartAuction
     StartAuction = NazScrooge_StartAuction
+	NazScrooge_Orig_ApplyBarberShopStyle = ApplyBarberShopStyle
+	ApplyBarberShopStyle = NazScrooge_ApplyBarberShopStyle
 	self:RegisterEvent("PLAYER_MONEY")
     Refresh_LDB()
 end
