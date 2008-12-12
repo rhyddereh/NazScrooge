@@ -44,6 +44,7 @@ local dataobj = ldb:NewDataObject("NazScrooge", {
     OnClick = function(clickedframe, button)
         InterfaceOptionsFrame_OpenToCategory(NazScrooge.optionsframe)
     end,
+	text = "NazScrooge",
 })
 
 local sessionsaved = 0

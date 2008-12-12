@@ -32,9 +32,9 @@ L["Display"] = true
 L["Display the gold in your lockbox"] = true
 L["You are saving %s per hour"] = true
 
-L["Slash-Command"] = "Scrooge"
-L["Slash-Command-Short"] = "scr"
-L["Channel"] = true
+L["Slash-Command"] = "Scrooge" --Probably doesn't need localized unless there is a better word to use as a slash command
+L["Slash-Command-Short"] = "scr" --Shortened command based on the above
+L["Channel"] = true --Word used in lib-sink-2.0, if you cannot find this I can grab it from the lib directly for this locale
 
 L["You do not have enough money to do that."] = true
 L["Saving %s"] = true
