@@ -19,6 +19,8 @@ L["Maximum"] = true
 L["Should I set aside money after you reach a certain amount?"] = true
 L["Maximum gold to keep available"] = true
 L["What's the max gold amount you want available to spend?"] = true
+--L["Verbose Output"] = true
+--L["Would you like verbose output each time you make money?"]= true
 
 L["Deposit"] = true
 L["What amount would you like to Deposit to your lockbox?"] = true

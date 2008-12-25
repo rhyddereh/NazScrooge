@@ -491,6 +491,18 @@ local options = {
 		},
 		output = {
 		},
+        verbose = {
+            type = 'toggle',
+            name = L["Verbose Output"],
+            desc = L["Would you like verbose output each time you make money?"],
+			get = function()
+						return NazScrooge.db.profile.verbose
+					end,
+			set = function(info, newValue)
+						NazScrooge.db.profile.verbose = newValue
+					end,
+			order = 25,
+		}
 	},
 }
 
@@ -869,6 +881,7 @@ function NazScrooge:OnInitialize()
             keeppercent = 0, --percent to save
             keepamount = 0, --min to keep (in gold)
             maxamount = 0, --max to have avail (in gold)
+			verbose = true, --do I display saving %s upon every save?
         },
         char = {
             savedcopper = 0, --amount of money saved in copper
@@ -961,7 +974,7 @@ function NazScrooge:PLAYER_MONEY()
                 verbosemin = true
                 verbosemax = false
                 verbosepct = false
-            else
+            elseif self.db.profile.verbose then
                 NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(diff)))
             end
         else
@@ -971,7 +984,7 @@ function NazScrooge:PLAYER_MONEY()
                 verbosemin = true
                 verbosemax = false
                 verbosepct = false
-            else
+            elseif self.db.profile.verbose then
                 NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(NazScrooge.db.profile.keepamount*10000)))
             end
         end
@@ -983,13 +996,15 @@ function NazScrooge:PLAYER_MONEY()
                 verbosemin = false
                 verbosemax = true
                 verbosepct = false
-            else
+            elseif self.db.profile.verbose then
                 NazScrooge:Pour(string.format(L['Saving %s'], makedisplay(diff)))
             end
 		elseif NazScrooge.db.profile.percenttoggle then
 			local increase = round((NazScrooge.db.profile.keeppercent / 100) * diff, 0)
 			addmoney(increase)
-			NazScrooge:Pour(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
+			if self.db.profile.verbose then
+				NazScrooge:Pour(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
+			end
 		end
 	end
 	lasttotal = lasttotal + diff
