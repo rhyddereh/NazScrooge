@@ -1001,9 +1001,11 @@ function NazScrooge:PLAYER_MONEY()
             end
 		elseif NazScrooge.db.profile.percenttoggle then
 			local increase = round((NazScrooge.db.profile.keeppercent / 100) * diff, 0)
-			addmoney(increase)
-			if self.db.profile.verbose then
-				NazScrooge:Pour(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
+			if increase then
+				addmoney(increase)
+				if self.db.profile.verbose then
+					NazScrooge:Pour(string.format(L['Earned %s, saving %s.'], makedisplay(diff), makedisplay(increase)))
+				end
 			end
 		end
 	end
