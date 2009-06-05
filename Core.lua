@@ -221,7 +221,7 @@ local function Refresh_Display()
     
     --addon frames/updates
     
-    if Auditor then
+    if Auditor and Auditor.UpdateFigures then
         Auditor:UpdateFigures() 
     end
     
