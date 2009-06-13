@@ -1,20 +1,22 @@
-## Title: NazScrooge
-## Notes: Put money away for a rainy day
-## Author: Rodrick
-## X-eMail: d DOT mangus AT gmail DOT com
-## X-Website: http://guild.requiemtech.com/
-
 ## Interface: 30100
+## Title: NazScrooge |cff7fff7f -@project-version@-|r
 ## Version: @project-version@
+## Revision: @project-revision@
+## Author: @project-author@
+## X-Date: @project-date-iso@
+## Notes: Put money away for a rainy day
+## X-Category: Inventory
+## X-License: GPL v2 or later
+## X-WoWI-ID: 9385
 
 ## DefaultState: enabled
 ## LoadOnDemand: 0
 ## SavedVariables: NazScroogeDB
 ## SavedVariablesPerCharacter: NazScroogeDBPC
 ## OptionalDeps: Ace3, LibSink-2.0
-## X-Embeds: Ace3, LibSink-2.0
-## X-Category: Inventory
-## X-License: GPL v2 or later
+
+## LoadManagers: AddonLoader
+## X-LoadOn-Always: delayed
 
 #@no-lib-strip@
 embeds.xml
