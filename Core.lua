@@ -8,6 +8,7 @@
             ArkInventory
             Auditor2
             FuBar_AuditorFu
+		Broker_Money
             Baggins?
             BagginsAnywhereBags?
             Sanity2?
@@ -252,6 +253,10 @@ local function Refresh_Display()
     if SB_MONEY then
         SB_MONEY:UpdateBlock()
     end
+	
+	if Money and Money.Update then
+		Money:Update()
+	end
     
     if AllPlayed then
         AllPlayed:Update()
