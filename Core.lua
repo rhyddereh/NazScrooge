@@ -391,6 +391,7 @@ local options = {
                                 NazScrooge.db.char.targetclear = newValue
                             end,
                     order = 30,
+				}
                 min = {
                     type = 'toggle',
                     name = L["Minimum"],
