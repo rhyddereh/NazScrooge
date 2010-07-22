@@ -251,7 +251,7 @@ local function Refresh_Display()
 	end
     
     if AllPlayed then
-        AllPlayed:Update()
+        AllPlayed:EventHandler()
     end
     
     if MoneyFu then
