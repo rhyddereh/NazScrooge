@@ -1,4 +1,4 @@
-## Interface: 30300
+## Interface: 40000
 ## Title: NazScrooge |cff7fff7f -@project-version@-|r
 ## Version: @project-version@
 ## Revision: @project-revision@
