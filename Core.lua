@@ -650,13 +650,16 @@ end
 	Notes:
     * Hooked version of BuyPetition
 	* Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+	
+	** Removed due to 4.x changes
+	
 function NazScrooge:BuyPetition(index, ...)
     local x, x, price = GetPetitionItemInfo(index)
     if checktotal(price) then
         return self.hooks.BuyPetition(index, ...)
     end
 end
+------------------------------------------------------------------------------------]]
 
 --[[----------------------------------------------------------------------------------
 	Notes:
@@ -935,7 +938,7 @@ function NazScrooge:OnEnable()
     self:RawHook("BuyGuildBankTab", true)
     self:RawHook("BuyGuildCharter", true)
     --self:RawHook("BuyStableSlot", true)
-    self:RawHook("BuyPetition", true)
+    --self:RawHook("BuyPetition", true)
     self:RawHook("BuyTrainerService", true)
     self:RawHook("PickupMerchantItem", true)
     self:RawHook("TakeTaxiNode", true)
