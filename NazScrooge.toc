@@ -1,7 +1,7 @@
 ## Interface: 40000
 ## Title: NazScrooge |cff7fff7f -@project-version@-|r
 ## Version: @project-version@
-## Revision: @file-date-integer@
+## Revision: @project-date-integer@
 ## Author: @project-author@
 ## X-Date: @project-date-iso@
 ## Notes: Put money away for a rainy day
