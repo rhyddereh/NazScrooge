@@ -140,7 +140,7 @@ end
 
 local function Refresh_LDB()
     dataobj.text = makedisplay(NazScrooge.db.char.savedcopper, true)
-    dataobj.tooltiptext = string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper), true) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved(), true))
+    dataobj.tooltiptext = string.format(L["You have %s in your bag"], makedisplay(GetMoney() - GetCursorMoney()), true) .. "\n" .. string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper), true) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved(), true))
 end
 
 --[[----------------------------------------------------------------------------------
