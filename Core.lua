@@ -4,22 +4,22 @@
 	
 	TODO:   
            
-    Compatibility with: (note: those with ? after them have not been tested by me and therefor not verified)
-            Combuctor
-            ArkInventory
-            Auditor2
-            FuBar_AuditorFu
-            Broker_Money
-            Baggins?
-            BagginsAnywhereBags?
-            Sanity2?
-            MoneyDetailFu?
-            OneBag?
-            SanityBags?
-            AllPlayed?
-            MoneyFu?
-            Moolah?
-            StatBlock_Money?
+	Compatibility with: (note: those with ? after them have not been tested by me and therefor not verified)
+		Combuctor
+		ArkInventory
+		Auditor2
+		FuBar_AuditorFu
+		Broker_Money
+		Baggins?
+		BagginsAnywhereBags?
+		Sanity2?
+		MoneyDetailFu?
+		OneBag?
+		SanityBags?
+		AllPlayed?
+		MoneyFu?
+		Moolah?
+		StatBlock_Money?
 ------------------------------------------------------------------------------------]]
 
 NazScrooge = LibStub("AceAddon-3.0"):NewAddon("NazScrooge", "LibSink-2.0", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
@@ -176,7 +176,7 @@ local function Refresh_Display()
 		elseif (name == "MailFrame") then
 			MoneyFrame_Update("SendMailMoneyFrame", GetMoney() - GetCursorMoney())
 			SendMailFrame_Update();
-		elseif (name == "ClassTrainerFrame") then
+		elseif (name == "ClassTrainerFrame" and MoneyFrame_Update) then
 			MoneyFrame_Update("ClassTrainerMoneyFrame", GetMoney() - GetCursorMoney())
 			ClassTrainer_SelectFirstLearnableSkill()
 			ClassTrainerFrame_Update()
