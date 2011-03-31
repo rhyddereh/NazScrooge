@@ -58,9 +58,8 @@ Localization
 ============
 
 If anyone is willing to help localize this addon, please head over to
-curseforge (or go to this page:
-http://wow.curseforge.com/projects/nazscrooge/localization/ and submit
-translations. I wish I could do it myself, but alas I only know english.
+the [localization][] page and submit translations. I wish I could do it
+myself, but alas I only know english.
 
 LDB Plugin
 ==========
@@ -70,4 +69,13 @@ LibDataBroker display addon installed as well.
 
 More information on LibDataBroker can be found on it's [wiki][]
 
+Bugs/Feature Requests
+=====================
+
+If you feel you have a bug or feature request, please post a ticket on the
+[ticket tracker on Curseforge][], a comment on the project is unlikely to get
+seen in a timely manner.
+
+  [localization]: http://wow.curseforge.com/projects/nazscrooge/localization/
+  [ticket tracker on Curseforge]: http://wow.curseforge.com/addons/nazscrooge/tickets/
   [wiki]: http://github.com/tekkub/libdatabroker-1-1/wikis
