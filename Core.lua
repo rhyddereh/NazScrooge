@@ -178,7 +178,7 @@ local function Refresh_Display()
 			SendMailFrame_Update();
 		elseif (name == "ClassTrainerFrame" and MoneyFrame_Update) then
 			MoneyFrame_Update("ClassTrainerFrameMoneyFrame", GetMoney() - GetCursorMoney())
-			ClassTrainer_SelectFirstLearnableSkill()
+			ClassTrainer_SelectNearestLearnableSkill()
 			ClassTrainerFrame_Update()
 		end
 	end
