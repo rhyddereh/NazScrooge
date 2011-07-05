@@ -51,9 +51,11 @@ local function round(num, idp)
 end
 
 local function makedisplay(copper, display)
-  text = GetCoinText(copper, " ")
+  if copper < 0 then
+    copper = copper * -1
+  end
   if NazScrooge.db.profile.sinkOptions.sink20OutputSink == "Channel" and not display then
-    return text
+    return GetCoinText(copper, " ")
   else
    return GetCoinTextureString(copper, 16)
   end
