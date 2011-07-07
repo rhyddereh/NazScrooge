@@ -1,10 +1,11 @@
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   NazScrooge Core addon
   Note: Ace3 addons can register for the event "MONEY_MODIFIED" in order to update their displays with the new getmoney() amount once it's been modified
   
   TODO: 
        
-  Compatibility with: (note: those with ? after them have not been tested by me and therefor not verified)
+  Compatibility with: (note: those with ? after them have not been tested by 
+  me and therefor not verified)
     Combuctor
     ArkInventory
     Auditor2
@@ -20,7 +21,7 @@
     MoneyFu?
     Moolah?
     StatBlock_Money?
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 
 NazScrooge = LibStub("AceAddon-3.0"):NewAddon("NazScrooge", "LibSink-2.0", "AceConsole-3.0", "AceEvent-3.0", "AceHook-3.0")
 local L = LibStub("AceLocale-3.0"):GetLocale("NazScrooge")
@@ -61,11 +62,11 @@ local function makedisplay(copper, display)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Flashes the edge of the screen when called
   * Lifted directly from Omen2, thank you Antiarc
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 function NazScrooge:Flash()
   if not self.FlashFrame then
     local flasher = CreateFrame("Frame", "ScroogeFlashFrame")
@@ -146,10 +147,10 @@ local function Refresh_LDB()
   dataobj.tooltiptext = string.format(L["You have %s in your bag"], makedisplay(GetMoney() - GetCursorMoney()), true) .. "\n" .. string.format(L["You have %s in your lockbox"], makedisplay(NazScrooge.db.char.savedcopper), true) .. "\n" .. string.format(L["You are saving %s per hour"], makedisplay(GetAvgSaved(), true))
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Refreshes displays (bag, etc.)
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 local function Refresh_Display()
 
   CheckGoal()
@@ -277,12 +278,12 @@ local function Refresh_Display()
   
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Adds the amount (in copper) given to the saved lockbox
   
   Returns true if it's able to add the entire amount, false if it can only add some
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 local function addmoney(amount)
   amount = amount or 0
   if tonumber(NazScrooge.db.char.savedcopper) + tonumber(amount) > NazScrooge.hooks.GetMoney() then
@@ -296,13 +297,13 @@ local function addmoney(amount)
   return true
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * removes the amount (in copper) given to the saved lockbox
   
   Returns true if it's able to remove the entire amount, the amount it can remove
   if it can only remove some
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 local function removemoney(amount)
   amount = amount or 0
   NazScrooge.db.char.savedcopper = tonumber(NazScrooge.db.char.savedcopper) - tonumber(amount)
@@ -548,10 +549,10 @@ local lasttotal --running total
 
 --Reusable functions
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Returns money amount in copper, or gold if arg1 == true
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 local function GetBoxMoney(gold)
   if gold then
     return NazScrooge.db.char.savedcopper/10000
@@ -560,10 +561,10 @@ local function GetBoxMoney(gold)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Checks to see if you have at least the amount given
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 local function checktotal(price)
   price = price or 0
   if price >  GetMoney() then
@@ -576,11 +577,11 @@ end
 
 --Hooked functions
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of GetMoney
   * Returns money amount
-------------------------------------------------------------------------------------]]
+----------------------------------------------------------------------------]]
 function NazScrooge:GetMoney(...)
   local money = self.hooks.GetMoney(...) --get the real value
   money = money - GetBoxMoney() --remove the amount of money in box
@@ -588,11 +589,12 @@ function NazScrooge:GetMoney(...)
   return round(money, 0)  -- return the value minus what we are keeping
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of BuyMerchantItem
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:BuyMerchantItem(index, qty, ...)
   local x, x, price = GetMerchantItemInfo(index)
   if qty ~= nil then price = price * qty end
@@ -601,11 +603,12 @@ function NazScrooge:BuyMerchantItem(index, qty, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of BuyMerchantItem
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:BuybackItem(index, ...)
   local x, x, price = GetBuybackItemInfo(index)
   if checktotal(price) then
@@ -613,11 +616,12 @@ function NazScrooge:BuybackItem(index, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of RepairAllItems
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:RepairAllItems(gb, ...)
   local price = GetRepairAllCost()
   if checktotal(price) or gb == 1 then
@@ -625,11 +629,12 @@ function NazScrooge:RepairAllItems(gb, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of BuyGuildBankTab
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:BuyGuildBankTab(...)
   local price = GetGuildBankTabCost()
   if checktotal(price) then
@@ -637,11 +642,12 @@ function NazScrooge:BuyGuildBankTab(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of BuyGuildCharter
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:BuyGuildCharter(...)
   local price = GetGuildCharterCost()
   if checktotal(price) then
@@ -649,41 +655,12 @@ function NazScrooge:BuyGuildCharter(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
-  Notes:
-  * Hooked version of BuyStableSlot
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-  
-  ** Removed due to 4.x changes
-  
-function NazScrooge:BuyStableSlot(...)
-  local price = GetNextStableSlotCost()
-  if checktotal(price) then
-    return self.hooks.BuyStableSlot(...)
-  end
-end 
-------------------------------------------------------------------------------------]]
-
---[[----------------------------------------------------------------------------------
-  Notes:
-  * Hooked version of BuyPetition
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-  
-  ** Removed due to 4.x changes
-  
-function NazScrooge:BuyPetition(index, ...)
-  local x, x, price = GetPetitionItemInfo(index)
-  if checktotal(price) then
-    return self.hooks.BuyPetition(index, ...)
-  end
-end
-------------------------------------------------------------------------------------]]
-
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of BuyTrainerService
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:BuyTrainerService(index, ...)
   local price = GetTrainerServiceCost(index)
   if checktotal(price) then
@@ -691,11 +668,12 @@ function NazScrooge:BuyTrainerService(index, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of PickupInventoryItem
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:PickupInventoryItem(index, ...)
   if InRepairMode() then
     local hasItem, x, price = GameTooltip:SetInventoryItem("player", index)
@@ -708,11 +686,12 @@ function NazScrooge:PickupInventoryItem(index, ...)
 
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of PickupContainerItem
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:PickupContainerItem(bag, slot, ...)
   if InRepairMode() then
     local hasItem, price = GameTooltip:SetBagItem(bag, slot)
@@ -724,11 +703,12 @@ function NazScrooge:PickupContainerItem(bag, slot, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of PickupMerchantItem
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:PickupMerchantItem(index, ...)
   local x, x, price = GetMerchantItemInfo(index)
   if checktotal(price) then
@@ -736,11 +716,12 @@ function NazScrooge:PickupMerchantItem(index, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of TakeTaxiNode
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:TakeTaxiNode(index, ...)
   local price = TaxiNodeCost(index)
   if checktotal(price) then
@@ -748,33 +729,36 @@ function NazScrooge:TakeTaxiNode(index, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of PickupPlayerMoney
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:PickupPlayerMoney(price, ...)
   if checktotal(price) then
     return self.hooks.PickupPlayerMoney(price, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of SetTradeMoney
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:SetTradeMoney(price, ...)
   if checktotal(price) then
     return self.hooks.SetTradeMoney(price, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of SetSendMailMoney
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:SetSendMailMoney(price, ...)
   if checktotal(price) then
     return self.hooks.SetSendMailMoney(price, ...)
@@ -783,11 +767,12 @@ function NazScrooge:SetSendMailMoney(price, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of SendMail
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:SendMail(...)
   local price = GetSendMailPrice()
   if checktotal(price) then
@@ -795,11 +780,12 @@ function NazScrooge:SendMail(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of CompleteQuest
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:CompleteQuest(...)
   local price = GetQuestMoneyToGet()
   if checktotal(price) then
@@ -807,11 +793,12 @@ function NazScrooge:CompleteQuest(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of TabardModel:Save
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:TabardModel_Save(...)
   local price = GetTabardCreationCost()
   if checktotal(price) then
@@ -819,22 +806,24 @@ function NazScrooge:TabardModel_Save(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of DepositGuildBankMoney
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:DepositGuildBankMoney(price, ...)
   if checktotal(price) then
     return self.hooks.DepositGuildBankMoney(price, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of BuyGuildBankTab
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:BuyGuildBankTab(...)
   local price = GetGuildBankTabCost()
   if checktotal(price) then
@@ -842,11 +831,12 @@ function NazScrooge:BuyGuildBankTab(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of PurchaseSlot
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:PurchaseSlot(...)
   local price = GetBankSlotCost(GetNumBankSlots() + 1)
   if checktotal(price) then
@@ -854,11 +844,12 @@ function NazScrooge:PurchaseSlot(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of ConfirmTalentWipe
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:ConfirmTalentWipe(...)
   local frame = StaticPopup_Visible("CONFIRM_TALENT_WIPE")
   local money = getglobal(frame.."MoneyFrame")
@@ -868,22 +859,24 @@ function NazScrooge:ConfirmTalentWipe(...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of PlaceAuctionBid
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:PlaceAuctionBid(kind, index, bid, ...)
   if checktotal(bid) then
     return self.hooks.PlaceAuctionBid(kind, index, bid, ...)
   end
 end
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of StartAuction
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:StartAuction(minBid, buyoutPrice, runTime, ...)
   local price = CalculateAuctionDeposit(runTime)
   if checktotal(price) then
@@ -892,17 +885,19 @@ function NazScrooge:StartAuction(minBid, buyoutPrice, runTime, ...)
 end
 
 
---[[----------------------------------------------------------------------------------
+--[[--------------------------------------------------------------------------
   Notes:
   * Hooked version of ApplyBarberShopStyle
-  * Makes sure you have enough non-hidden money and then passes or blocks depending
-------------------------------------------------------------------------------------]]
+  * Makes sure you have enough non-hidden money and then passes or blocks 
+  depending
+----------------------------------------------------------------------------]]
 function NazScrooge:ApplyBarberShopStyle(...)
   local price = GetBarberShopTotalCost()
   if checktotal(price) then
     return self.hooks.ApplyBarberShopStyle(...)
   end
 end
+
 --Setup functions
 
 local function ChatCmd(input)
